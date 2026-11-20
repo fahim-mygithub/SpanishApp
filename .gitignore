@@ -1,0 +1,9 @@
+node_modules
+dist
+dev-dist
+.env.local
+worker/node_modules
+worker/.wrangler
+.vapid.local
+worker/.dev.vars
+*.tgz
