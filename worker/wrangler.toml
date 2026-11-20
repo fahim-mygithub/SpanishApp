@@ -1,0 +1,20 @@
+name = "spanish-nudge"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# Secrets (set with `npx wrangler secret put <NAME>`, never committed):
+#   VAPID_PUBLIC_KEY   - from `npm run vapid` in the app folder
+#   VAPID_PRIVATE_KEY  - same
+[vars]
+VAPID_SUBJECT = "https://fahim-mygithub.github.io/SpanishApp/"
+ALLOWED_ORIGINS = "https://fahim-mygithub.github.io,http://localhost:5291"
+APP_URL = "https://fahim-mygithub.github.io/SpanishApp/"
+
+# `npx wrangler kv namespace create SUBS`, then paste the id here.
+[[kv_namespaces]]
+binding = "SUBS"
+id = "624ef87baabd43cfa876b11dc4917f00"
+
+# Every 15 minutes: send reminders whose time has come in the subscriber's own time zone.
+[triggers]
+crons = ["*/15 * * * *"]

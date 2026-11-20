@@ -1,0 +1,19 @@
+{
+  "name": "spanish-nudge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@block65/webcrypto-web-push": "^2.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261118.1",
+    "typescript": "~5.8.3",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.165.0"
+  }
+}
