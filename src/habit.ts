@@ -44,6 +44,7 @@ export function streak(): Streak {
 
 /** Progress-based plan: you move on when you finish a day, never because the calendar moved. */
 export function settleDay() {
+  markCoreIfDone() // heals a day whose words were all learned but the finish screen never ran (app closed early)
   const t = localISO()
   while (S.dayIdx < TOTAL_DAYS && S.dayDoneOn[S.dayIdx] && S.dayDoneOn[S.dayIdx] < t) S.dayIdx++
 }

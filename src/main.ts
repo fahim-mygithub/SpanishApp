@@ -27,6 +27,7 @@ const nav = document.getElementById('tabs')!
 nav.innerHTML = TABS.map(([v, ic, label]) => `<button data-v="${v}">${icon(ic)}<span>${label}</span></button>`).join('')
 nav.querySelectorAll<HTMLButtonElement>('button').forEach((b) => (b.onclick = () => setView(b.dataset.v as View)))
 
+try { void navigator.storage?.persist?.() } catch { /* ignore */ }
 settleDay(); save()
 const params = new URLSearchParams(location.search)
 if (params.get('start') === '1') {

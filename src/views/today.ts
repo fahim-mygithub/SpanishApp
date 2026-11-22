@@ -1,8 +1,8 @@
 import { dayAt, phaseOf, TOTAL_DAYS } from '../data'
 import { addDays, localISO, weekdayShort } from '../dates'
-import { coverage, counted, MIN_INPUT, settleDay, streak } from '../habit'
+import { advanceEarly, coverage, counted, MIN_INPUT, settleDay, streak } from '../habit'
 import { isDone, S, save, setDone, today } from '../state'
-import { dueCards, known, newCardsUpTo } from '../srs'
+import { dueCards, dueCount, known, newCardsUpTo } from '../srs'
 import { sfx, toast } from '../feel'
 import { $, $$, app, esc, icon } from '../ui'
 import { isIOS, isStandalone, notifyDone } from '../push'
@@ -46,7 +46,10 @@ export function renderToday(go: () => void) {
       <div class="tile"><div class="big num" style="color:${st.streak ? 'var(--accent)' : 'var(--ink-subtle)'}">${icon('flame')}${st.streak}</div><div class="lbl">day streak${st.freezes ? ` · ${icon('snow').replace('<svg', '<svg style="width:12px;height:12px;vertical-align:-1px"')} ${st.freezes}` : ''}</div></div>
       <div class="tile"><div class="big num">${known()}</div><div class="lbl">words${cov.pct ? ` · ~${cov.pct}% of everyday speech` : ` · ${cov.next[0]} unlocks ~${cov.next[1]}%`}</div></div>
     </div>
-    ${!isStandalone() && isIOS() ? `<div class="card" style="margin-top:12px;display:flex;gap:12px;align-items:center">${icon('share')}<div class="grow small">Add to your Home Screen for reminders and full-screen. Share → Add to Home Screen.</div></div>` : ''}
+    ${tl.learned || coreDone ? `<div class="card" style="margin-top:12px"><div class="title">${tl.learned} new word${tl.learned === 1 ? '' : 's'} learned today${tl.reviewed ? ` · ${tl.reviewed} reviewed` : ''}</div>
+      <p class="muted small" style="margin:4px 0 0">${coreDone ? `Day ${S.dayIdx} is done and saved. ` : ''}Tomorrow: ${dueCount(1)} review${dueCount(1) === 1 ? '' : 's'}${coreDone && S.dayIdx < TOTAL_DAYS && !dayAt(S.dayIdx + 1).rv ? ` + Day ${S.dayIdx + 1}'s new words` : ''}, ready at midnight.</p>
+      ${coreDone && S.dayIdx < TOTAL_DAYS && !day.rv && newCardsUpTo(S.dayIdx + 1).length ? `<button class="btn small" id="ahead" style="margin-top:12px">Learn Day ${S.dayIdx + 1}'s words now</button>` : ''}</div>` : ''}
+    ${!isStandalone() && isIOS() ? `<div class="card" style="margin-top:12px;display:flex;gap:12px;align-items:center">${icon('share')}<div class="grow small">Open the app from the Home Screen icon only: progress made in Safari is stored separately and won't appear there. Share → Add to Home Screen. Turning on Sync in Settings keeps both in step.</div></div>` : ''}
 
     <p class="section-label">Also today, if you want</p>
     <ul class="rows card">
@@ -64,6 +67,7 @@ export function renderToday(go: () => void) {
     <div class="dock"><button class="btn primary" id="start">${icon('play')} ${st.todayCounted ? 'Keep going' : 'Start'}<span style="opacity:.65;font-weight:600">&nbsp;· ${st.todayCounted ? 'bonus' : '5 min'}</span></button></div>`
 
   $('#start').onclick = () => startSession(go)
+  const ahead = document.getElementById('ahead'); if (ahead) ahead.onclick = () => { advanceEarly(); startSession(go) }
   $$('.check').forEach((b) => (b.onclick = () => {
     const k = b.dataset.k!; const on = !isDone(S.dayIdx, k); setDone(S.dayIdx, k, on)
     if (on) sfx.right(0); go()

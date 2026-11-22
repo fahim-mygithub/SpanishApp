@@ -30,6 +30,12 @@ export function dueCards(): Card[] {
     .sort((a, b) => a[1].due.localeCompare(b[1].due))
     .map(([id]) => map.get(id)).filter((c): c is Card => !!c)
 }
+/** How many cards will be due by the end of the day `offset` days from now (0 = today). */
+export function dueCount(offset = 0): number {
+  const end = new Date(); end.setDate(end.getDate() + offset); end.setHours(23, 59, 59, 999)
+  const ids = new Set(allCards().map((c) => c.id))
+  return Object.entries(S.srs).filter(([id, s]) => ids.has(id) && new Date(s.due) <= end).length
+}
 /** New words for a plan day (and any earlier ones you skipped). Your own mined cards first. */
 export function newCardsUpTo(dayIdx: number): Card[] {
   return allCards().filter((c) => c.day <= dayIdx && !S.srs[c.id]).sort((a, b) => (b.t ? 1 : 0) - (a.t ? 1 : 0) || a.day - b.day)
